@@ -53,7 +53,7 @@ class EGGHOLDER:
                 for seed in seeds:
                     best_list, _ = PS.pso(init_pos_f = self.generate_init_positions, swarm_size=swarm_size, iterations=iterations, eval_f=self.eval_func, 
                                         seed=seed, phi1=phi_list[0], phi2=phi_list[1],
-                                        neighborhood_topology="star", model="full", inertia=False, constriction=False, boundaries = [-512, 512])
+                                        neighborhood_topology="star", model="full", inertia=False, constriction=False, boundaries = [[-512, 512]])
 
                     # plt.plot(range(len(best_list)), best_list, label=str(seed))
                     # plt.legend()

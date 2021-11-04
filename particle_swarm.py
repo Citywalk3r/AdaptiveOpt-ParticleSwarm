@@ -18,10 +18,13 @@ class ParticleSwarm:
         return K
     
     def calculate_particle_velocity_limits(self, boundaries):
-        x_min = np.min(boundaries)
-        x_max = np.max(boundaries)
-        limit = (x_max-x_min)/2
-        return limit
+        limits = []
+        for boundary in boundaries:
+            min = np.min(boundary)
+            max = np.max(boundary)
+            v_limit = (max-min)/2
+            limits.append(v_limit)
+        return limits
     
     def create_particle_position_gif(self, particles, iterations, seed, model, neighborhood_topology):
         filenames = []
@@ -77,6 +80,7 @@ class ParticleSwarm:
                 model: "full", "cognition", "social", or "selfless"
                 inertia: Whether to apply intertia to the velocity vector or not.
                 constriction: Whether to apply constriction to the velocity vector or not.
+                boundaries: List of lists, containing the function boundaries for each dimension.
 
             Returns:
                 best_list : list of historical best solutions through the iterations
@@ -85,7 +89,6 @@ class ParticleSwarm:
             print("Running the particle swarm optimization algorithm...")
 
             # initialization
-            rng = np.random.default_rng(seed)
             swarm_list = []
             best_list = []
             ω = 1
@@ -94,13 +97,13 @@ class ParticleSwarm:
             if constriction:
                 K = self.calculate_constriction(phi1, phi2)
             
-            particle_velocity_limit = self.calculate_particle_velocity_limits(boundaries)
+            particle_velocity_limits = self.calculate_particle_velocity_limits(boundaries)
                
             
             # Generate the particles
             initial_positions = init_pos_f(seed, swarm_size)
             for i in range(swarm_size):
-                swarm_list.append(Particle(self.is_debug, initial_positions[i], eval_f, phi1, phi2, model, particle_velocity_limit))
+                swarm_list.append(Particle(self.is_debug, initial_positions[i], eval_f, phi1, phi2, model, particle_velocity_limits))
             
             if neighborhood_topology == "ring":
                 for particle in swarm_list:
@@ -146,10 +149,10 @@ class ParticleSwarm:
 
 class Particle:
 
-    def __init__(self, is_debug, position, eval_f, phi1, phi2, model, v_limit):
+    def __init__(self, is_debug, position, eval_f, phi1, phi2, model, particle_velocity_limits):
         self.is_debug = is_debug
         self.model = model
-        self.v_limit = v_limit
+        self.v_limits = particle_velocity_limits
         self.historical_v = []
         self.historical_x = []
         self.eval_f = eval_f
