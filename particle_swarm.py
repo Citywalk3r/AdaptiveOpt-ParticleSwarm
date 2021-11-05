@@ -93,7 +93,6 @@ class ParticleSwarm:
             print("Running the particle swarm optimization algorithm...")
 
             # initialization
-            rng = np.random.default_rng(seed)
             swarm_list = []
             best_list = []
             ω = 1
